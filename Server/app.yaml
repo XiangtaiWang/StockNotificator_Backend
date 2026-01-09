@@ -1,0 +1,14 @@
+runtime: dotnet8 
+instance_class: F1
+  
+automatic_scaling:
+  min_instances: 1
+  max_instances: 1
+  min_idle_instances: 1
+
+env_variables:
+  REDIS_HOST: "${REDIS_HOST}"
+  REDIS_TOKEN: "${REDIS_TOKEN}"
+  TELEGRAM_TOKEN: "${TELEGRAM_TOKEN}"
+  FIRESTORE_PROJECT_ID: "${FIRESTORE_PROJECT_ID}"
+  JWT_KEY: "${JWT_KEY}"
