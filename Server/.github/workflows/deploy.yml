@@ -17,10 +17,10 @@ jobs:
         envsubst < app.yaml > app_ready.yaml
       env:
         REDIS_HOST: ${{ secrets.REDIS_HOST}}
-	REDIS_TOKEN: ${{ secrets.REDIS_TOKEN}}
+        REDIS_TOKEN: ${{ secrets.REDIS_TOKEN}}
         TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
-	FIRESTORE_PROJECT_ID: "${{secrets.FIRESTORE_PROJECT_ID}}"
-	JWT_KEY: "${{secrets.JWT_KEY}}"
+        FIRESTORE_PROJECT_ID: "${{secrets.FIRESTORE_PROJECT_ID}}"
+        JWT_KEY: "${{secrets.JWT_KEY}}"
 
     - id: 'auth'
       uses: 'google-github-actions/auth@v2'
