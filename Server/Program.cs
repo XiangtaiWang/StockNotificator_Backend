@@ -32,9 +32,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 var redisUrl = builder.Configuration["REDIS_HOST"];
 var redisToken = builder.Configuration["REDIS_TOKEN"] ?? "";
+
 var connectionString = string.IsNullOrEmpty(redisToken) 
     ? redisUrl 
-    : $"{redisUrl},password={redisToken},ssl=true,abortConnect=false";
+    : $"{redisUrl}:6379,password={redisToken},ssl=true,abortConnect=false";
+
 
 var redisConnection = ConnectionMultiplexer.Connect(connectionString);
 builder.Services.AddSingleton<IConnectionMultiplexer>(redisConnection);
@@ -44,15 +46,15 @@ builder.Services.Configure<FirebaseSetting>(options => {
     options.ProjectId = builder.Configuration["FIRESTORE_PROJECT_ID"];
 });
 
-builder.Services.AddHangfire(configuration => configuration
-    .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
-    .UseSimpleAssemblyNameTypeSerializer()
-    .UseRecommendedSerializerSettings()
-    .UseRedisStorage(redisConnection, new RedisStorageOptions
-    {
-        Prefix = "hangfire:",
-    }));
-builder.Services.AddHangfireServer();
+// builder.Services.AddHangfire(configuration => configuration
+//     .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+//     .UseSimpleAssemblyNameTypeSerializer()
+//     .UseRecommendedSerializerSettings()
+//     .UseRedisStorage(redisConnection, new RedisStorageOptions
+//     {
+//         Prefix = "hangfire:",
+//     }));
+// builder.Services.AddHangfireServer();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -110,12 +112,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHangfireDashboard();
+// app.UseHangfireDashboard();
 app.UseHttpsRedirection();
 app.MapControllers();
 // app.UseAuthorization();
 // app.UseAuthentication();
-RegisterRecurringJobs();
+// RegisterRecurringJobs();
 app.Run();
 
 void RegisterRecurringJobs()
