@@ -14,7 +14,7 @@ jobs:
 
     - name: Inject secrets into app.yaml
       run: |
-        envsubst < app.yaml > app_ready.yaml
+        envsubst < Server/app.yaml > Server/app_ready.yaml
       env:
         REDIS_HOST: ${{ secrets.REDIS_HOST}}
         REDIS_TOKEN: ${{ secrets.REDIS_TOKEN}}
@@ -32,3 +32,4 @@ jobs:
       with:
         project_id: ${{ secrets.GCP_PROJECT_ID }}
         deliverables: 'app_ready.yaml'
+        working_directory: 'Server'
