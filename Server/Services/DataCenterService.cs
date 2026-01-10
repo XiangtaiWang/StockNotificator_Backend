@@ -23,7 +23,6 @@ public class DataCenterService:IDataCenterService
     }
     public async Task UpdateStockInfoJob()
     {
-        Console.WriteLine($"{DateTime.UtcNow} Updating stock info");
         var stockList = await _userService.GetStockList();
         var twseStockInfos = await _stockService.FetchStocksInfo(stockList);
         var stockInfo = new StockInfo()

@@ -55,7 +55,6 @@ public class StockNotificationService : IStockNotificationService
                     userLatestNotification.LatestNotificationInfos[stockCode] = now;
                 }
                 
-                Console.WriteLine($"sending message to {user}");
                 await _messageService.SendMessage(chatId, messageContent.ToString());
                 _dataCenterService.UpdateUserLatestNotification(userLatestNotification);
 

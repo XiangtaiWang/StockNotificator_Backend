@@ -20,8 +20,6 @@ public class UpdateCacheStockList : IActionFilter
         if (context.Exception == null && context.HttpContext.Response.StatusCode == 200)
         {
             // _dataCenterService.();
-            
-            Console.WriteLine("檢測到資料異動，Redis Cache 已更新。");
         }
     }
 }

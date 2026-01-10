@@ -1,24 +1,25 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Server.Interfaces;
 namespace Server.Controllers;
-
-public class JobService 
+[ApiController]
+[Route("api/[controller]")]
+public class JobController 
 {
     private IUserService _userService;
     private IDataCenterService _dataCenterService;
     private IStockNotificationService _stockNotificationService;
 
-    public JobService(IUserService userService, IDataCenterService dataCenterService, IStockNotificationService stockNotificationService)
+    public JobController(IUserService userService, IDataCenterService dataCenterService, IStockNotificationService stockNotificationService)
     {
         _userService = userService;
         _dataCenterService = dataCenterService;
         _stockNotificationService = stockNotificationService;
     }
 
-
+    [HttpPost("SystemMinutelyJob")]
     public async Task SystemMinutelyJob()
     {
-        Console.Write("running SystemMinutelyJob");
         await UpdateStockInfo();
         await PushNotification();
     }
@@ -34,7 +35,8 @@ public class JobService
 
         if (userList.IsNullOrEmpty())
         {
-            Console.WriteLine("No User need to be notified");
+            // Console.WriteLine("No User need to be notified");
+            return;
         }
         await _stockNotificationService.Notify(userList);
         

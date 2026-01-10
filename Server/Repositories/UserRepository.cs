@@ -98,7 +98,6 @@ public class UserRepository : IUserRepository
         var stocks = new HashSet<string>();
         foreach (var document in snapshotAsync.Documents)
         {
-            Console.WriteLine(document);
             var userStockNotificationSetting = document.ConvertTo<UserStockNotificationSetting>();
 
             stocks.UnionWith(userStockNotificationSetting.StockNotificationSettings.Select(s=>s.StockCode));

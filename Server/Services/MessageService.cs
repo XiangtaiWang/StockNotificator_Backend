@@ -31,12 +31,9 @@ public class MessageService : IMessageService
         
         if (response.IsSuccessStatusCode)
         {
-            Console.WriteLine($"[Success] 訊息已成功發送至 {chatId}");
             return true;
         }
-
-        var errorDetail = await response.Content.ReadAsStringAsync();
-        Console.WriteLine($"[Error] Telegram 回傳失敗: {response.StatusCode}, 內容: {errorDetail}");
+        
         return false;
         
 

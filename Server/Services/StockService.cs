@@ -23,7 +23,6 @@ public class StockService : IStockService
     {
         if (stocks.IsNullOrEmpty())
         {
-            Console.WriteLine("No stocks need to be updated");
             return new List<TwseStockInfo>();
         }
         
@@ -34,8 +33,7 @@ public class StockService : IStockService
             throw new Exception();
         }
         var content = await response.Content.ReadAsStringAsync();
-
-        // Console.WriteLine(content);
+        
         
         var data = JsonSerializer.Deserialize<TwseResponse>(content);
         

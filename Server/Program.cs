@@ -120,21 +120,21 @@ app.MapControllers();
 // RegisterRecurringJobs();
 app.Run();
 
-void RegisterRecurringJobs()
-{
-    
-    RecurringJob.AddOrUpdate<JobService>(
-        "Minutely-Fetch-Stock-Info",
-        service => service.SystemMinutelyJob() ,
-        "* 9-21 * * 1-5",
-        new RecurringJobOptions
-        {
-            TimeZone = TimeZoneInfo.FindSystemTimeZoneById("Asia/Taipei")
-        }
-    );
-
-    
-}
+// void RegisterRecurringJobs()
+// {
+//     
+//     RecurringJob.AddOrUpdate<JobController>(
+//         "Minutely-Fetch-Stock-Info",
+//         service => service.SystemMinutelyJob() ,
+//         "* 9-21 * * 1-5",
+//         new RecurringJobOptions
+//         {
+//             TimeZone = TimeZoneInfo.FindSystemTimeZoneById("Asia/Taipei")
+//         }
+//     );
+//
+//     
+// }
 
 public class FirebaseSetting
 {
