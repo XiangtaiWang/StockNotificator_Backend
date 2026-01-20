@@ -16,12 +16,7 @@ var jwtKey = builder.Configuration["JWT_KEY"];
 
 builder.Services.AddCors(options =>
 {
-    // options.AddDefaultPolicy(builder =>
-    // {
-    //     builder.WithOrigins("http://localhost:5173", "https://stocknotificator.tedweb.net")
-    //         .AllowAnyHeader()
-    //         .AllowAnyMethod();
-    // });
+
     options.AddDefaultPolicy(policy =>
     {
         // 改用 SetIsOriginAllowed 比較彈性，可以避開 http/https 或斜線的問題
@@ -132,6 +127,12 @@ if (app.Environment.IsProduction())
 {
     app.Use(async (context, next) =>
     {
+        if (context.Request.Method == HttpMethods.Options)
+        {
+            await next();
+            return;
+        }
+        
         if (context.Request.Path.StartsWithSegments("/health"))
         {
             await next();
@@ -151,8 +152,6 @@ if (app.Environment.IsProduction())
 
 app.MapControllers();
 app.Run();
-
-
 
 public class FirebaseSetting
 {
