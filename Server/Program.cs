@@ -110,11 +110,17 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseCors();
-
+app.UseAuthentication();
+app.UseAuthorization();
 if (app.Environment.IsProduction())
 {
     app.Use(async (context, next) =>
     {
+        if (context.Request.Method == "OPTIONS")
+        {
+            await next();
+            return;
+        }
         if (context.Request.Path.StartsWithSegments("/health"))
         {
             await next();
