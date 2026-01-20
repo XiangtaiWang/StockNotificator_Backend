@@ -18,9 +18,9 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(builder =>
     {
-        builder.WithOrigins("http://localhost:5173")
+        builder.WithOrigins("http://localhost:5173", "https://stocknotificator.tedweb.net")
             .AllowAnyHeader()
-            .WithMethods("POST");
+            .AllowAnyMethod();
     });
 });
 
@@ -110,6 +110,29 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseCors();
+
+if (app.Environment.IsProduction())
+{
+    app.Use(async (context, next) =>
+    {
+        if (context.Request.Path.StartsWithSegments("/health"))
+        {
+            await next();
+            return;
+        }
+
+        var cfSecret = context.Request.Headers["X-CF-Secret"];
+        if (cfSecret != app.Configuration["CLOUDFLARE_SECRET"])
+        {
+            context.Response.StatusCode = 403;
+            await context.Response.WriteAsync("Direct access is prohibited.");
+            return;
+        }
+        await next();
+    });    
+}
+
+
 app.MapControllers();
 
 app.Run();
