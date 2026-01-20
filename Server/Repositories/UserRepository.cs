@@ -31,13 +31,13 @@ public class UserRepository : IUserRepository
         return snapshot.Exists;
     }
 
-    public async Task OverwriteStockNotifications(string account, StockNotificationSettingsModel notificationSettings)
+    public async Task OverwriteStockNotifications(string account, UserStockNotificationSetting notificationSettings)
     {
         var docRef = _Db.Collection(_usernotificationsettingKey).Document(account);
         await docRef.SetAsync(notificationSettings);
     }
 
-    public async Task<RegisterAccountModel> GetAccountDetail(string account)
+    public async Task<RegisterAccountModel?> GetAccountDetail(string account)
     {
         var docRef = _Db.Collection("Users").Document(account);
 
@@ -47,7 +47,7 @@ public class UserRepository : IUserRepository
             return snapshot.ConvertTo<RegisterAccountModel>();
         }
 
-        throw new Exception("asd");
+        return null;
     }
 
     public async Task<IEnumerable<string>> GetAllUser()

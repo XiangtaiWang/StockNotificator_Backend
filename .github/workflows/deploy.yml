@@ -22,7 +22,7 @@ jobs:
     - name: 'Deploy to Cloud Run'
       uses: 'google-github-actions/deploy-cloudrun@v2'
       with:
-        service: 'stocknotificator' # 你的服務名稱（自訂）
+        service: 'stocknotificator'
         region: 'asia-east1'
         source: './Server'
         env_vars: |
@@ -31,3 +31,4 @@ jobs:
           TELEGRAM_TOKEN=${{ secrets.TELEGRAM_TOKEN }}
           FIRESTORE_PROJECT_ID=${{ secrets.FIRESTORE_PROJECT_ID }}
           JWT_KEY=${{ secrets.JWT_KEY }}
+          SYSTEMJOB_KEY=${{ secrets.SYSTEMJOB_KEY}}

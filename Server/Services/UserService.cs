@@ -20,12 +20,16 @@ public class UserService : IUserService
         _messageService = messageService;
         _userRepository = userRepository;
     }
-    public async Task RegisterAccount(AccountModel account)
+    public async Task<RegisterResult> RegisterAccount(AccountModel account)
     {
         var exist = await _userRepository.CheckExist(account.Account);
         if (exist)
         {
-            throw new Exception("account already exist");
+            return new RegisterResult()
+            {
+                IsSuccessful = false,
+                Message = "Account already exist"
+            };
         }
 
         var saltBytes = RandomNumberGenerator.GetBytes(16);
@@ -40,22 +44,41 @@ public class UserService : IUserService
         };
         
         await _userRepository.AddUser(registerAccountModel);
+        return new RegisterResult()
+        {
+            IsSuccessful = true
+        };
     }
 
-    public async Task SetStockNotifications(string account, StockNotificationSettingsModel notificationSettings)
+    public async Task SetStockNotifications(string account, UserStockNotificationSetting notificationSettings)
     {
         await _userRepository.OverwriteStockNotifications(account, notificationSettings);
     }
 
-    public async Task<string> Login(AccountModel account)
+    public async Task<LoginResult> Login(AccountModel account)
     {
         var accountDetail = await _userRepository.GetAccountDetail(account.Account);
-        if (VerifyPassword(account.Password, accountDetail.EncryptedPassword, accountDetail.Salt))
+        if (accountDetail!=null)
         {
-            return GenerateJwtToken(account.Account);
+            if (VerifyPassword(account.Password, accountDetail.EncryptedPassword, accountDetail.Salt))
+            {
+                return new LoginResult()
+                { 
+                    IsSuccessful = true,
+                    Token = GenerateJwtToken(account.Account)
+                };
+            }
+
+            return new LoginResult()
+            {
+                IsSuccessful = false
+            };
         }
-        
-        throw new Exception("Password incorrect");
+
+        return new LoginResult()
+        {
+            IsSuccessful = false
+        };
     }
 
     public async Task<IEnumerable<string>> GetUserList()
@@ -71,10 +94,21 @@ public class UserService : IUserService
 
     public async Task InitialzeTelegramSetting(string? account, string telegramUsername)
     {
+        if (telegramUsername.StartsWith("@"))
+        {
+            telegramUsername = telegramUsername.Substring(1);
+        }
+
+        
         var chatId = await _messageService.FindChatId(telegramUsername);
         await _userRepository.UpdateTelegramSetting(account, telegramUsername, chatId);
     }
-    
+
+    public async Task<UserStockNotificationSetting> GetStockNotifications(string account)
+    {
+        return await _userRepository.GetUserNotificationSettings(account);
+    }
+
 
     private string ComputeHash(string password, string salt)
     {
@@ -112,4 +146,24 @@ public class UserService : IUserService
 
         return tokenHandler.WriteToken(token);
     }
+    
+    public async Task<Profile> GetProfile(string account)
+    {
+        var accountDetail = await _userRepository.GetAccountDetail(account);
+        return new Profile()
+        {
+            TelegramUserName = accountDetail.TelegramUsername,
+            TelegramHasBeenSet = accountDetail.TelegramChatId!=0
+            
+        };
+
+    }
+    
+    
+}
+
+public class LoginResult
+{
+    public bool IsSuccessful { get; set; }
+    public string Token { get; set; }
 }

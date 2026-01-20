@@ -6,8 +6,8 @@ public interface IUserRepository
 {
     public Task AddUser(RegisterAccountModel accountModel);
     public Task<bool> CheckExist(string account);
-    public Task OverwriteStockNotifications(string account, StockNotificationSettingsModel notificationSettings);
-    public Task<RegisterAccountModel> GetAccountDetail(string accountAccount);
+    public Task OverwriteStockNotifications(string account, UserStockNotificationSetting notificationSettings);
+    public Task<RegisterAccountModel?> GetAccountDetail(string accountAccount);
     Task<IEnumerable<string>> GetAllUser();
     Task<IDictionary<string, long>> GetUserChatIdDict();
     Task UpdateTelegramSetting(string account, string telegramUsername, long chatId);

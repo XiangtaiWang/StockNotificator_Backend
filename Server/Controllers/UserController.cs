@@ -23,21 +23,21 @@ public class UserController : ControllerBase
     [HttpPost("RegisterAccount")]
     public async Task<ActionResult> RegisterAccount(AccountModel accountModel)
     {
-        await _userService.RegisterAccount(accountModel);
-        
-        return new OkResult();
+        var result = await _userService.RegisterAccount(accountModel);
+
+        return Ok(result);
     }
     [HttpPost("Login")]
     public async Task<ActionResult> Login(AccountModel loginModel)
     {
-        var token = await _userService.Login(loginModel);
+        var result = await _userService.Login(loginModel);
 
-        return Ok(token);
+        return Ok(result);
     }
     
     [Authorize]
     [HttpPost("SetStockNotifications")]
-    public async Task<ActionResult> SetStockNotifications(StockNotificationSettingsModel notificationSettings)
+    public async Task<ActionResult> SetStockNotifications(UserStockNotificationSetting notificationSettings)
     {
         var account = User.FindFirst("Account")?.Value;
         await _userService.SetStockNotifications(account, notificationSettings);
@@ -47,8 +47,9 @@ public class UserController : ControllerBase
     
     [Authorize]
     [HttpPost("SetTelegram")]
-    public async Task<ActionResult> SetStockNotifications(string telegramUsername)
+    public async Task<ActionResult> SetTelegram(SetTelegramRequest request)
     {
+        var telegramUsername = request.TelegramUsername;
         var account = User.FindFirst("Account")?.Value;
         
         await _userService.InitialzeTelegramSetting(account, telegramUsername);
@@ -57,4 +58,22 @@ public class UserController : ControllerBase
 
         return new OkResult();
     }
+    [Authorize]
+    [HttpPost("GetTelegram")]
+    public async Task<Profile> GetTelegram()
+    {
+        var account = User.FindFirst("Account")?.Value;
+        
+        return await _userService.GetProfile(account);
+    }
+    
+    [Authorize]
+    [HttpPost("GetStockNotifications")]
+    public async Task<UserStockNotificationSetting> GetStockNotifications()
+    {
+        var account = User.FindFirst("Account")?.Value;
+
+        return await _userService.GetStockNotifications(account);
+    }
+    
 }

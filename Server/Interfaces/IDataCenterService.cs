@@ -10,4 +10,5 @@ public interface IDataCenterService
     UserLatestNotificationInfo GetUserLatestNotification(string user);
     Task<long> GetChatId(string user);
     void UpdateUserLatestNotification(UserLatestNotificationInfo userLatestNotification);
+    
 }
