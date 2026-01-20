@@ -32,3 +32,4 @@ jobs:
           FIRESTORE_PROJECT_ID=${{ secrets.FIRESTORE_PROJECT_ID }}
           JWT_KEY=${{ secrets.JWT_KEY }}
           SYSTEMJOB_KEY=${{ secrets.SYSTEMJOB_KEY}}
+          CLOUDFLARE_SECRET=${{ secrets.CLOUDFLARE_SECRET}}
