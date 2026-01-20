@@ -132,11 +132,6 @@ if (app.Environment.IsProduction())
 {
     app.Use(async (context, next) =>
     {
-        if (context.Request.Method == "OPTIONS")
-        {
-            context.Response.StatusCode = 204;
-            return; 
-        }
         if (context.Request.Path.StartsWithSegments("/health"))
         {
             await next();
@@ -154,9 +149,7 @@ if (app.Environment.IsProduction())
     });    
 }
 
-
 app.MapControllers();
-
 app.Run();
 
 
