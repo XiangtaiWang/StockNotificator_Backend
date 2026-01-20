@@ -121,7 +121,7 @@ if (app.Environment.IsProduction())
             return;
         }
 
-        var cfSecret = context.Request.Headers["X-CF-Secret"];
+        var cfSecret = context.Request.Headers["HeaderFromCF"];
         if (cfSecret != app.Configuration["CLOUDFLARE_SECRET"])
         {
             context.Response.StatusCode = 403;
