@@ -16,9 +16,25 @@ var jwtKey = builder.Configuration["JWT_KEY"];
 
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(builder =>
+    // options.AddDefaultPolicy(builder =>
+    // {
+    //     builder.WithOrigins("http://localhost:5173", "https://stocknotificator.tedweb.net")
+    //         .AllowAnyHeader()
+    //         .AllowAnyMethod();
+    // });
+    options.AddDefaultPolicy(policy =>
     {
-        builder.WithOrigins("http://localhost:5173", "https://stocknotificator.tedweb.net")
+        // 改用 SetIsOriginAllowed 比較彈性，可以避開 http/https 或斜線的問題
+        policy.SetIsOriginAllowed(origin => 
+            {
+                // 開發環境允許 localhost
+                if (origin == "http://localhost:5173") return true;
+                
+                // 生產環境允許你的網域
+                if (origin.StartsWith("https://stocknotificator.tedweb.net")) return true;
+                
+                return false;
+            })
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
@@ -118,8 +134,8 @@ if (app.Environment.IsProduction())
     {
         if (context.Request.Method == "OPTIONS")
         {
-            await next();
-            return;
+            context.Response.StatusCode = 204;
+            return; 
         }
         if (context.Request.Path.StartsWithSegments("/health"))
         {
