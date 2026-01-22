@@ -1,4 +1,5 @@
 using Google.Cloud.Firestore;
+using Server.Helpers;
 using Server.Interfaces;
 using Server.Models;
 
@@ -17,7 +18,7 @@ public class UserRepository : IUserRepository
     public async Task AddUser(RegisterAccountModel accountModel)
     {
         var docRef = _Db.Collection("Users").Document(accountModel.Account);
-        accountModel.CreatedAt = DateTime.UtcNow;
+        accountModel.CreatedAt = ProjectDatetime.DateTimeNow();
         await docRef.SetAsync(accountModel);
     }
 
