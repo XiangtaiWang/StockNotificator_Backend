@@ -1,6 +1,5 @@
 using System.Text;
 using Google.Cloud.Firestore;
-using Server.Helpers;
 using Server.Interfaces;
 using DateTime = System.DateTime;
 
@@ -34,14 +33,11 @@ public class StockNotificationService : IStockNotificationService
                 if (!userLatestNotification.LatestNotificationInfos.TryGetValue(notificationSetting.StockCode,
                         out var lastSentTime))
                 {
-                    lastSentTime = ProjectDatetime.DateTimeNow().AddDays(-1);
+                    
+                    lastSentTime = DateTime.UtcNow.AddDays(-1);
                 }
 
-                var systemUpdateDateTimeWithoutSeconds = new DateTime(systemUpdateTime.Year, systemUpdateTime.Month, systemUpdateTime.Day, systemUpdateTime.Hour, systemUpdateTime.Minute, 0);
-                var lastSentTimeWithoutSeconds = new DateTime(lastSentTime.Year, lastSentTime.Month, lastSentTime.Day, lastSentTime.Hour,
-                        lastSentTime.Minute, 0);
-                var nextShouldSendDateTimeWithoutSeconds = lastSentTimeWithoutSeconds.AddMinutes(notificationSetting.IntervalMinute);
-                if (systemUpdateDateTimeWithoutSeconds>=nextShouldSendDateTimeWithoutSeconds)
+                if (systemUpdateTime>lastSentTime.AddMinutes(notificationSetting.IntervalMinute))
                 {
                     notifyStockList.Add(notificationSetting.StockCode);
                 }
@@ -50,7 +46,7 @@ public class StockNotificationService : IStockNotificationService
             if (notifyStockList.Any())
             {
                 var chatId = await _dataCenterService.GetChatId(user);
-                var now = ProjectDatetime.DateTimeNow();
+                var now = DateTime.UtcNow;
                 foreach (var stockCode in notifyStockList)
                 {
                     stockInfo.StockDict.TryGetValue(stockCode, out var stock);

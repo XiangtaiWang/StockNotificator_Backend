@@ -1,5 +1,4 @@
 using System.Text.Json;
-using Server.Helpers;
 using Server.Interfaces;
 using Server.Models;
 
@@ -33,7 +32,7 @@ public class DataCenterService:IDataCenterService
                 Name = s.Name,
                 Price = Convert.ToDecimal(s.Price)
             }),
-            UpdateTime = ProjectDatetime.DateTimeNow()
+            UpdateTime = DateTime.UtcNow
         };
 
         

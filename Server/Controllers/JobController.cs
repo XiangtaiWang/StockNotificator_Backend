@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using Server.Helpers;
 using Server.Interfaces;
 using Server.Models;
 
@@ -29,10 +28,9 @@ public class JobController
     {
         if (string.IsNullOrEmpty(receivedKey) || receivedKey != _expectedKey)
         {
-
             await _logService.Write(new LogModel()
             {
-                Timestamp = ProjectDatetime.DateTimeNow(),
+                Timestamp = DateTime.UtcNow,
                 Message = "SystemMinutelyJob called by unknown",
                 Level = LogLevel.Warning
             });

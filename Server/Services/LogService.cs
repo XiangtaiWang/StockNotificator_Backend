@@ -1,5 +1,4 @@
 using Google.Cloud.Firestore;
-using Server.Helpers;
 using Server.Interfaces;
 using Server.Models;
 
@@ -15,7 +14,7 @@ public class LogService : ILogService
     }
     public async Task Write(LogModel logModel)
     {
-        var docId = ProjectDatetime.DateTimeNow().ToString("yyyy-MM-dd");
+        var docId = DateTime.UtcNow.ToString("yyyy-MM-dd");
         var docRef = _Db.Collection("SystemLogs").Document(docId);
 
         await docRef.SetAsync(new { 
