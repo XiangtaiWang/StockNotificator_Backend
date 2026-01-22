@@ -37,10 +37,9 @@ public class StockNotificationService : IStockNotificationService
                     lastSentTime = DateTime.UtcNow.AddDays(-1);
                 }
                 var systemUpdateDateTimeWithoutSeconds = new DateTime(systemUpdateTime.Year, systemUpdateTime.Month, systemUpdateTime.Day, systemUpdateTime.Hour, systemUpdateTime.Minute, 0);
-                var lastSentTimeWithoutSeconds = new DateTime(lastSentTime.Year, lastSentTime.Month, lastSentTime.Day, lastSentTime.Hour,
-                    lastSentTime.Minute, 0);
+                var lastSentTimeWithoutSeconds = new DateTime(lastSentTime.Year, lastSentTime.Month, lastSentTime.Day, lastSentTime.Hour, lastSentTime.Minute, 0);
                 var nextShouldSendDateTimeWithoutSeconds = lastSentTimeWithoutSeconds.AddMinutes(notificationSetting.IntervalMinute);
-                if (systemUpdateDateTimeWithoutSeconds>nextShouldSendDateTimeWithoutSeconds)
+                if (systemUpdateDateTimeWithoutSeconds>=nextShouldSendDateTimeWithoutSeconds)
                 {
                     notifyStockList.Add(notificationSetting.StockCode);
                 }
