@@ -1,5 +1,6 @@
 using System.Text;
 using Google.Cloud.Firestore;
+using Server.Helpers;
 using Server.Interfaces;
 using DateTime = System.DateTime;
 
@@ -25,7 +26,7 @@ public class StockNotificationService : IStockNotificationService
             var messageContent = new StringBuilder();
             var notifyStockList = new List<string>();
 
-            messageContent.Append($"系統更新時間: {stockInfo.UpdateTime}");
+            messageContent.Append($"系統更新時間: {stockInfo.UpdateTime.ConvertToTaipeiTimeZone().ToString("yyyy/M/d HH:mm:ss")} \n");
             var userLatestNotification = _dataCenterService.GetUserLatestNotification(user);
             var notificationSettings = await _dataCenterService.GetUserNotificationSettings(user);
             foreach (var notificationSetting in notificationSettings.StockNotificationSettings)
@@ -33,11 +34,13 @@ public class StockNotificationService : IStockNotificationService
                 if (!userLatestNotification.LatestNotificationInfos.TryGetValue(notificationSetting.StockCode,
                         out var lastSentTime))
                 {
-                    
                     lastSentTime = DateTime.UtcNow.AddDays(-1);
                 }
-
-                if (systemUpdateTime>lastSentTime.AddMinutes(notificationSetting.IntervalMinute))
+                var systemUpdateDateTimeWithoutSeconds = new DateTime(systemUpdateTime.Year, systemUpdateTime.Month, systemUpdateTime.Day, systemUpdateTime.Hour, systemUpdateTime.Minute, 0);
+                var lastSentTimeWithoutSeconds = new DateTime(lastSentTime.Year, lastSentTime.Month, lastSentTime.Day, lastSentTime.Hour,
+                    lastSentTime.Minute, 0);
+                var nextShouldSendDateTimeWithoutSeconds = lastSentTimeWithoutSeconds.AddMinutes(notificationSetting.IntervalMinute);
+                if (systemUpdateDateTimeWithoutSeconds>nextShouldSendDateTimeWithoutSeconds)
                 {
                     notifyStockList.Add(notificationSetting.StockCode);
                 }
