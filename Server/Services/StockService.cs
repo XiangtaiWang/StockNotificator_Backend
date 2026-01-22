@@ -12,9 +12,11 @@ public class StockService : IStockService
 {
     private const string Url = "https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=";
     private HttpClient client;
+    private ILogService _logService;
 
-    public StockService(HttpClient client)
+    public StockService(HttpClient client, ILogService logService)
     {
+        _logService = logService;
         this.client = client;
     }
 
@@ -30,7 +32,15 @@ public class StockService : IStockService
         var response = await client.GetAsync(url);
         if (!response.IsSuccessStatusCode)
         {
-            throw new Exception();
+            var errorBody = await response.Content.ReadAsStringAsync();
+            var log = new LogModel()
+            {
+                Level = LogLevel.Error,
+                Message = $"FetchStocksInfo :{string.Join(", ", stocks)}\nStatus Code: {response.StatusCode}\n Message: {errorBody}",
+                Timestamp = DateTime.UtcNow
+            };
+            await _logService.Write(log);
+            return new List<TwseStockInfo>();
         }
         var content = await response.Content.ReadAsStringAsync();
         
