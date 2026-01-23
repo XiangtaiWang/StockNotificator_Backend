@@ -32,7 +32,9 @@ public class DataCenterService:IDataCenterService
             {
                 Code = s.Code,
                 Name = s.Name,
-                Price = Convert.ToDecimal(s.Price)
+                Price = s.Price,
+                AskPrice = s.AskPrice.Split("_")[0],
+                BidPrice = s.BidPrice.Split("_")[0]
             }),
             UpdateTime = DateTime.UtcNow
         };

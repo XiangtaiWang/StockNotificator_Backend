@@ -1,5 +1,4 @@
 using System.Text;
-using Google.Cloud.Firestore;
 using Microsoft.IdentityModel.Tokens;
 using Server.Helpers;
 using Server.Interfaces;
@@ -27,7 +26,7 @@ public class StockNotificationService : IStockNotificationService
             var messageContent = new StringBuilder();
             var notifyStockList = new List<string>();
 
-            messageContent.Append($"系統更新時間: {stockInfo.UpdateTime.ConvertToTaipeiTimeZone().ToString("yyyy/M/d HH:mm:ss")} \n");
+            messageContent.Append($"系統更新時間: {stockInfo.UpdateTime.ConvertToTaipeiTimeZone().ToString("yyyy/M/d HH:mm:ss")} \n\n");
             var userLatestNotification = _dataCenterService.GetUserLatestNotification(user);
             var notificationSettings = await _dataCenterService.GetUserNotificationSettings(user);
             foreach (var notificationSetting in notificationSettings.StockNotificationSettings)
@@ -53,8 +52,12 @@ public class StockNotificationService : IStockNotificationService
                 foreach (var stockCode in notifyStockList)
                 {
                     stockInfo.StockDict.TryGetValue(stockCode, out var stock);
-                    messageContent.Append($"股票 {stockCode} {stock.Name} 價格為 {stock.Price}\n");
+                    messageContent.Append($"股票 {stockCode} {stock.Name}\n");
+                    messageContent.Append($"最新成交價格為 {stock.Price}\n");
+                    messageContent.Append($"最高委買價格為 {stock.BidPrice}\n");
+                    messageContent.Append($"最低委賣價格為 {stock.AskPrice}\n");
                     
+                    messageContent.Append("\n");
                     userLatestNotification.LatestNotificationInfos[stockCode] = now;
                 }
                 

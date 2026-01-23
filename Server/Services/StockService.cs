@@ -43,11 +43,8 @@ public class StockService : IStockService
             return new List<TwseStockInfo>();
         }
         var content = await response.Content.ReadAsStringAsync();
-        
-        
         var data = JsonSerializer.Deserialize<TwseResponse>(content);
         
-
         return !data.MsgArray.IsNullOrEmpty()?data.MsgArray:ImmutableList<TwseStockInfo>.Empty;
     }
 

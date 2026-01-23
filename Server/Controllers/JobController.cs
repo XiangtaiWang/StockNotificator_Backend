@@ -42,7 +42,6 @@ public class JobController
     private async Task UpdateStockInfo()
     {
         await _dataCenterService.UpdateStockInfoJob();
-        
     }
     
     private async Task PushNotification()
