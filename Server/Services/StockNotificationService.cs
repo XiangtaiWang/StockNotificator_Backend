@@ -1,5 +1,6 @@
 using System.Text;
 using Google.Cloud.Firestore;
+using Microsoft.IdentityModel.Tokens;
 using Server.Helpers;
 using Server.Interfaces;
 using DateTime = System.DateTime;
@@ -45,7 +46,7 @@ public class StockNotificationService : IStockNotificationService
                 }
             }
 
-            if (notifyStockList.Any())
+            if (!notifyStockList.IsNullOrEmpty())
             {
                 var chatId = await _dataCenterService.GetChatId(user);
                 var now = DateTime.UtcNow;

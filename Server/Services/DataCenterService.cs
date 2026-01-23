@@ -12,6 +12,7 @@ public class DataCenterService:IDataCenterService
     private ICacheService _cacheService;
     private string stockInfoCacheKey = "StockInfo";
     private IUserRepository _userRepository;
+    private string _userNotificationSettingCacheKey;
 
     public DataCenterService(IUserService userService, ICacheService cacheService, IStockService stockService, IUserRepository userRepository)
     {
@@ -24,6 +25,7 @@ public class DataCenterService:IDataCenterService
     {
         var stockList = await _userService.GetStockList();
         var twseStockInfos = await _stockService.FetchStocksInfo(stockList);
+
         var stockInfo = new StockInfo()
         {
             Stocks = twseStockInfos.Select(s => new Stock()
@@ -34,7 +36,6 @@ public class DataCenterService:IDataCenterService
             }),
             UpdateTime = DateTime.UtcNow
         };
-
         
         _cacheService.Write(stockInfoCacheKey, JsonSerializer.Serialize(stockInfo));
 
@@ -52,9 +53,11 @@ public class DataCenterService:IDataCenterService
         return stockInfo;
     }
 
+    
     public async Task<UserStockNotificationSetting> GetUserNotificationSettings(string user)
     {
-        var key = $"UserStockNotificationSetting_{user}";
+        _userNotificationSettingCacheKey = "UserStockNotificationSetting_";
+        var key = $"{_userNotificationSettingCacheKey}{user}";
         if (!_cacheService.Exist(key))
         {
             var userNotificationSettings = await _userRepository.GetUserNotificationSettings(user);
@@ -71,6 +74,14 @@ public class DataCenterService:IDataCenterService
         }
         return userStockNotificationSetting;
         
+    }
+
+    public async Task UpdateUserNotificationSettingsCache(string user)
+    {
+        _userNotificationSettingCacheKey = "UserStockNotificationSetting_";
+        var key = $"{_userNotificationSettingCacheKey}{user}";
+        var userNotificationSettings = await _userRepository.GetUserNotificationSettings(user);
+        _cacheService.Write(key, JsonSerializer.Serialize(userNotificationSettings));
     }
 
     public UserLatestNotificationInfo GetUserLatestNotification(string user)

@@ -41,7 +41,7 @@ public class UserController : ControllerBase
     {
         var account = User.FindFirst("Account")?.Value;
         await _userService.SetStockNotifications(account, notificationSettings);
-
+        await _dataCenterService.UpdateUserNotificationSettingsCache(account);
         return new OkResult();
     }
     
